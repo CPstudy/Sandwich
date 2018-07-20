@@ -7,7 +7,6 @@
         android:id="@+id/layoutBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="@dimen/sandwich_margin_small"
         android:layout_gravity="center"
         android:background="@drawable/bg_sandwich_iconbox">
 
@@ -15,16 +14,15 @@
             android:id="@+id/imgIcon"
             android:layout_width="@dimen/sandwich_icon_size"
             android:layout_height="@dimen/sandwich_icon_size"
-            android:layout_margin="@dimen/sandwich_margin_small"
-            android:layout_centerVertical="true"
-            android:src="@drawable/icon_sandwich_notification"/>
+            android:layout_centerInParent="true"
+            android:src="@drawable/icon_sandwich_message"/>
 
         <TextView
+            android:id="@+id/txtText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sandwich_margin_tiny"
             android:padding="@dimen/sandwich_margin_small"
-            android:layout_toRightOf="@+id/imgIcon"
-            android:layout_centerVertical="true"
             android:background="@drawable/bg_sandwich_textbox"
             android:text="이것은 샌드위치입니다."/>
 
