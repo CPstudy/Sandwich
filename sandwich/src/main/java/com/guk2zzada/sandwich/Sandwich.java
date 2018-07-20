@@ -13,6 +13,7 @@ import android.support.annotation.IntDef;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
@@ -42,7 +43,7 @@ public class Sandwich {
     public @interface TYPE {}
 
     private final static int DURATION_BOX = 250;
-    private final static int DURATION_ICON = 350;
+    private final static int DURATION_ICON = 700;
 
     private static Context mContext;
     private static View mLayout;
@@ -80,69 +81,71 @@ public class Sandwich {
     }
 
     public void show() {
+        final RelativeLayout layoutFront = mLayout.findViewById(R.id.layoutFront);
         final RelativeLayout layoutBack = mLayout.findViewById(R.id.layoutBack);
         //final ImageView imgBack = mLayout.findViewById(R.id.imgBack);
         final ImageView imgIcon = mLayout.findViewById(R.id.imgIcon);
         final TextView txtText = mLayout.findViewById(R.id.txtText);
+        final TextView txtText2 = mLayout.findViewById(R.id.txtText2);
 
         final Drawable drawable = mContext.getResources().getDrawable(R.drawable.bg_sandwich_iconbox);
         drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
 
         imgIcon.setImageResource(icon);
         txtText.setText(mMessage);
+        txtText2.setText(mMessage);
 
-        ViewTreeObserver vto = layoutBack.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            layoutFront.setBackgroundDrawable(drawable);
+            layoutBack.setBackgroundDrawable(drawable);
+        } else {
+            layoutFront.setBackground(drawable);
+            layoutBack.setBackground(drawable);
+        }
+
+        layoutBack.setVisibility(View.INVISIBLE);
+
+        ObjectAnimator scaleBounceX = ObjectAnimator.ofFloat(layoutFront, View.SCALE_X, 0.5f, 1.0f);
+        scaleBounceX.setInterpolator(new BounceInterpolator());
+        scaleBounceX.setDuration(DURATION_ICON);
+
+        ObjectAnimator scaleBounceY = ObjectAnimator.ofFloat(layoutFront, View.SCALE_Y, 0.5f, 1.0f);
+        scaleBounceY.setInterpolator(new BounceInterpolator());
+        scaleBounceY.setDuration(DURATION_ICON);
+
+        final ObjectAnimator flipFront = ObjectAnimator.ofFloat(layoutFront, View.ROTATION_X, 0, 90);
+        flipFront.setDuration(DURATION_BOX);
+        flipFront.setInterpolator(new AccelerateInterpolator());
+
+        final ObjectAnimator flipBack = ObjectAnimator.ofFloat(layoutBack, View.ROTATION_X, -90, 0);
+        flipBack.setDuration(DURATION_BOX);
+        flipBack.setInterpolator(new DecelerateInterpolator());
+
+        scaleBounceX.addListener(new AnimatorListenerAdapter() {
+
             @Override
-            public void onGlobalLayout() {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    layoutBack.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                    layoutBack.setBackgroundDrawable(drawable);
-                } else {
-                    layoutBack.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    layoutBack.setBackground(drawable);
-                }
-
-                txtText.setTranslationY(txtText.getHeight());
-
-                ObjectAnimator scaleBounceX = ObjectAnimator.ofFloat(layoutBack, View.SCALE_X, 0.7f, 1.0f);
-                scaleBounceX.setInterpolator(new BounceInterpolator());
-                scaleBounceX.setDuration(DURATION_ICON);
-
-                ObjectAnimator scaleBounceY = ObjectAnimator.ofFloat(layoutBack, View.SCALE_Y, 0.7f, 1.0f);
-                scaleBounceY.setInterpolator(new BounceInterpolator());
-                scaleBounceY.setDuration(DURATION_ICON);
-
-                final ObjectAnimator translate = ObjectAnimator.ofFloat(txtText, View.TRANSLATION_Y, 0);
-                animationSettings(translate);
-                translate.setStartDelay(DURATION_BOX);
-
-                scaleBounceX.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        super.onAnimationStart(animation);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        AnimatorSet animatorSet = new AnimatorSet();
-                        animatorSet.playTogether(
-                                translate
-                        );
-                        animatorSet.start();
-                    }
-                });
-
-                AnimatorSet animatorSet = new AnimatorSet();
-                animatorSet.playTogether(
-                        scaleBounceX,
-                        scaleBounceY
-                );
-                animatorSet.start();
-
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                flipFront.start();
             }
         });
+
+        flipFront.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                layoutFront.setVisibility(View.INVISIBLE);
+                layoutBack.setVisibility(View.VISIBLE);
+                flipBack.start();
+            }
+        });
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(
+                scaleBounceX,
+                scaleBounceY
+        );
+        animatorSet.start();
 
         Toast toast = new Toast(mContext);
         toast.setDuration(mToastDuration);
@@ -176,12 +179,5 @@ public class Sandwich {
     public void setIcon(int resId) {
         boolSetIcon = true;
         icon = resId;
-    }
-
-    private void animationSettings(ObjectAnimator... animators) {
-        for(ObjectAnimator anim : animators) {
-            anim.setDuration(DURATION_BOX);
-            anim.setInterpolator(new DecelerateInterpolator());
-        }
     }
 }

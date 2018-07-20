@@ -1,9 +1,10 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="sandwich_margin_tiny">4dp</dimen>
-    <dimen name="sandwich_margin_small">8dp</dimen>
-    <dimen name="sandwich_margin_default">16dp</dimen>
+    <dimen name="sandwichMarginTiny">4dp</dimen>
+    <dimen name="sandwichMarginSmall">8dp</dimen>
+    <dimen name="sandwichMarginDefault">16dp</dimen>
 
-    <dimen name="sandwich_radius_box">8dp</dimen>
-    <dimen name="sandwich_icon_size">20dp</dimen>
+    <dimen name="sandwichRadiusBox">8dp</dimen>
+    <dimen name="sandwichIconSize">20dp</dimen>
+    <dimen name="sandwichTextSize">15sp</dimen>
 </resources>
