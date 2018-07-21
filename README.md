@@ -24,7 +24,7 @@ allprojects {
 ```
 dependencies {
     ...
-    implementation 'com.github.CPstudy:Sandwich:0.0.1'
+    implementation 'com.github.CPstudy:Sandwich:1.0.0'
 }
 ```
 
