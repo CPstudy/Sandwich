@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:clipChildren="false">
 
     <RelativeLayout
         android:id="@+id/layoutFront"
@@ -9,7 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/sandwichMarginDefault"
-        android:background="@drawable/bg_sandwich_iconbox">
+        android:background="@drawable/bg_sandwich_iconbox"
+        android:clipToPadding="false"
+        android:clipChildren="false">
 
         <ImageView
             android:id="@+id/imgIcon"
@@ -36,7 +40,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/bg_sandwich_iconbox">
+        android:layout_margin="@dimen/sandwichMarginDefault"
+        android:background="@drawable/bg_sandwich_iconbox"
+        android:clipToPadding="false"
+        android:clipChildren="false">
 
         <TextView
             android:id="@+id/txtText"
