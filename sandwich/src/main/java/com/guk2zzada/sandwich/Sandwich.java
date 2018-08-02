@@ -11,9 +11,11 @@ import android.os.Build;
 import android.support.annotation.IntDef;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -78,6 +80,7 @@ public class Sandwich {
     }
 
     public void show() {
+        final FrameLayout layoutRoot = mLayout.findViewById(R.id.layoutRoot);
         final RelativeLayout layoutFront = mLayout.findViewById(R.id.layoutFront);
         final RelativeLayout layoutBack = mLayout.findViewById(R.id.layoutBack);
         //final ImageView imgBack = mLayout.findViewById(R.id.imgBack);
@@ -100,49 +103,51 @@ public class Sandwich {
             layoutBack.setBackground(drawable);
         }
 
-        layoutBack.setVisibility(View.INVISIBLE);
+        ViewTreeObserver vto = layoutBack.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int height = layoutBack.getHeight();
+                layoutFront.setTranslationY(-height);
 
-        ObjectAnimator scaleBounceX = ObjectAnimator.ofFloat(layoutFront, View.SCALE_X, 0.5f, 1.0f);
-        scaleBounceX.setInterpolator(new BounceInterpolator());
-        scaleBounceX.setDuration(DURATION_ICON);
+                final ObjectAnimator scaleBounceX = ObjectAnimator.ofFloat(layoutRoot, View.SCALE_X, 0.5f, 1.0f);
+                scaleBounceX.setInterpolator(new BounceInterpolator());
+                scaleBounceX.setDuration(DURATION_ICON);
 
-        ObjectAnimator scaleBounceY = ObjectAnimator.ofFloat(layoutFront, View.SCALE_Y, 0.5f, 1.0f);
-        scaleBounceY.setInterpolator(new BounceInterpolator());
-        scaleBounceY.setDuration(DURATION_ICON);
+                final ObjectAnimator scaleBounceY = ObjectAnimator.ofFloat(layoutRoot, View.SCALE_Y, 0.5f, 1.0f);
+                scaleBounceY.setInterpolator(new BounceInterpolator());
+                scaleBounceY.setDuration(DURATION_ICON);
 
-        final ObjectAnimator flipFront = ObjectAnimator.ofFloat(layoutFront, View.ROTATION_X, 0, 90);
+                final ObjectAnimator slideUp = ObjectAnimator.ofFloat(layoutFront, View.TRANSLATION_Y, -height, 0);
+                slideUp.setDuration(DURATION_BOX);
+                slideUp.setInterpolator(new DecelerateInterpolator());
+
+                scaleBounceX.addListener(new AnimatorListenerAdapter() {
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        slideUp.start();
+                    }
+                });
+
+                AnimatorSet animatorSet = new AnimatorSet();
+                animatorSet.playTogether(
+                        scaleBounceX,
+                        scaleBounceY
+                );
+                animatorSet.start();
+            }
+        });
+
+
+        /*final ObjectAnimator flipFront = ObjectAnimator.ofFloat(layoutFront, View.ROTATION_X, 0, 90);
         flipFront.setDuration(DURATION_BOX);
         flipFront.setInterpolator(new AccelerateInterpolator());
 
         final ObjectAnimator flipBack = ObjectAnimator.ofFloat(layoutBack, View.ROTATION_X, -90, 0);
         flipBack.setDuration(DURATION_BOX);
-        flipBack.setInterpolator(new DecelerateInterpolator());
-
-        scaleBounceX.addListener(new AnimatorListenerAdapter() {
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                flipFront.start();
-            }
-        });
-
-        flipFront.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                layoutFront.setVisibility(View.INVISIBLE);
-                layoutBack.setVisibility(View.VISIBLE);
-                flipBack.start();
-            }
-        });
-
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(
-                scaleBounceX,
-                scaleBounceY
-        );
-        animatorSet.start();
+        flipBack.setInterpolator(new DecelerateInterpolator());*/
 
         Toast toast = new Toast(mContext);
         toast.setDuration(mToastDuration);

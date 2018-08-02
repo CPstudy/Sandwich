@@ -1,39 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:clipChildren="false">
-
-    <RelativeLayout
-        android:id="@+id/layoutFront"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/sandwichMarginDefault"
-        android:background="@drawable/bg_sandwich_iconbox"
-        android:clipToPadding="false"
-        android:clipChildren="false">
-
-        <ImageView
-            android:id="@+id/imgIcon"
-            android:layout_width="@dimen/sandwichIconSize"
-            android:layout_height="@dimen/sandwichIconSize"
-            android:layout_centerInParent="true"
-            android:src="@drawable/icon_sandwich_message"/>
-
-        <TextView
-            android:id="@+id/txtText2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/sandwichMarginTiny"
-            android:padding="@dimen/sandwichMarginSmall"
-            android:background="@drawable/bg_sandwich_textbox"
-            android:text="이것은 샌드위치입니다."
-            android:textSize="@dimen/sandwichTextSize"
-            android:visibility="invisible"/>
-
-    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/layoutBack"
@@ -47,6 +18,34 @@
 
         <TextView
             android:id="@+id/txtText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/sandwichMarginTiny"
+            android:padding="@dimen/sandwichMarginSmall"
+            android:background="@drawable/bg_sandwich_textbox"
+            android:text="이것은 샌드위치입니다."
+            android:textSize="@dimen/sandwichTextSize"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutFront"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/sandwichMarginDefault"
+        android:clipToPadding="false"
+        android:clipChildren="false">
+
+        <ImageView
+            android:id="@+id/imgIcon"
+            android:layout_width="@dimen/sandwichIconSize"
+            android:layout_height="@dimen/sandwichIconSize"
+            android:layout_centerInParent="true"
+            android:src="@drawable/icon_sandwich_message"/>
+
+        <TextView
+            android:id="@+id/txtText2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/sandwichMarginTiny"
