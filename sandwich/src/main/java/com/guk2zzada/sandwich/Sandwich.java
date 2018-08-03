@@ -80,7 +80,6 @@ public class Sandwich {
     }
 
     public void show() {
-        final FrameLayout layoutRoot = mLayout.findViewById(R.id.layoutRoot);
         final RelativeLayout layoutFront = mLayout.findViewById(R.id.layoutFront);
         final RelativeLayout layoutBack = mLayout.findViewById(R.id.layoutBack);
         //final ImageView imgBack = mLayout.findViewById(R.id.imgBack);
@@ -96,10 +95,8 @@ public class Sandwich {
         txtText2.setText(mMessage);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            layoutFront.setBackgroundDrawable(drawable);
             layoutBack.setBackgroundDrawable(drawable);
         } else {
-            layoutFront.setBackground(drawable);
             layoutBack.setBackground(drawable);
         }
 
@@ -108,31 +105,37 @@ public class Sandwich {
             @Override
             public void onGlobalLayout() {
                 int height = layoutBack.getHeight();
-                layoutFront.setTranslationY(-height);
 
-                final ObjectAnimator scaleBounceX = ObjectAnimator.ofFloat(layoutRoot, View.SCALE_X, 0.5f, 1.0f);
+                final ObjectAnimator alphaInvisible = ObjectAnimator.ofFloat(layoutFront, View.ALPHA, 1.0f, 0.0f);
+                alphaInvisible.setDuration(0);
+
+                final ObjectAnimator alphaVisible = ObjectAnimator.ofFloat(layoutFront, View.ALPHA, 0.0f, 1.0f);
+                alphaVisible.setDuration(0);
+
+                final ObjectAnimator scaleBounceX = ObjectAnimator.ofFloat(layoutBack, View.SCALE_X, 0.5f, 1.0f);
                 scaleBounceX.setInterpolator(new BounceInterpolator());
                 scaleBounceX.setDuration(DURATION_ICON);
 
-                final ObjectAnimator scaleBounceY = ObjectAnimator.ofFloat(layoutRoot, View.SCALE_Y, 0.5f, 1.0f);
+                final ObjectAnimator scaleBounceY = ObjectAnimator.ofFloat(layoutBack, View.SCALE_Y, 0.5f, 1.0f);
                 scaleBounceY.setInterpolator(new BounceInterpolator());
                 scaleBounceY.setDuration(DURATION_ICON);
 
                 final ObjectAnimator slideUp = ObjectAnimator.ofFloat(layoutFront, View.TRANSLATION_Y, -height, 0);
                 slideUp.setDuration(DURATION_BOX);
-                slideUp.setInterpolator(new DecelerateInterpolator());
 
                 scaleBounceX.addListener(new AnimatorListenerAdapter() {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
+                        alphaVisible.start();
                         slideUp.start();
                     }
                 });
 
                 AnimatorSet animatorSet = new AnimatorSet();
                 animatorSet.playTogether(
+                        alphaInvisible,
                         scaleBounceX,
                         scaleBounceY
                 );
